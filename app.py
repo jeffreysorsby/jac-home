@@ -20,7 +20,8 @@ def create_app(test_config=None):
 
     #GET ALL CARS
     @app.route('/cars', methods=['GET'])
-    def get_cars():
+    @requires_auth('get:cars')
+    def get_cars(payload):
         try:
             cars = Car.query.all()
             data = [car.format() for car in cars]
@@ -34,7 +35,8 @@ def create_app(test_config=None):
 
     #GET CARS BY ID
     @app.route('/cars/<int:car_id>', methods=['GET'])
-    def get_cars_byid(car_id):
+    @requires_auth('get:cars')
+    def get_cars_byid(payload, car_id):
         try:
             cars = Car.query.filter(Car.id == car_id).one_or_none()
             data = cars.format()
@@ -48,7 +50,8 @@ def create_app(test_config=None):
 
     #CREATE CARS
     @app.route('/cars', methods=['POST'])
-    def post_car():
+    @requires_auth('post:cars')
+    def post_car(payload):
         body = request.get_json()
         request_name = body.get('name')
         request_image_url = body.get('image_url')
@@ -82,9 +85,10 @@ def create_app(test_config=None):
         except:
             abort(400)
 
-    #UPDATE CARS
+    #PATCH CARS
     @app.route('/cars/<int:car_id>', methods=['PATCH'])
-    def edit_car(car_id):
+    @requires_auth('patch:cars')
+    def edit_car(payload, car_id):
         try:
             car = Car.query.filter(Car.id == car_id).one_or_none()
             if car is None:
@@ -104,7 +108,8 @@ def create_app(test_config=None):
 
     #GET ALL DOCUMENTS
     @app.route('/documents', methods=['GET'])
-    def get_documents():
+    @requires_auth('get:documents')
+    def get_documents(payload):
         try:
             docs = Document.query.all()
             data = [doc.format() for doc in docs]
@@ -116,7 +121,8 @@ def create_app(test_config=None):
             })
 
     @app.route('/documents/<int:document_id>', methods=['GET'])
-    def get_documents_byid(document_id):
+    @requires_auth('get:documents')
+    def get_documents_byid(payload, document_id):
         try:
             docs = Document.query.filter(Document.id == document_id).one_or_none()
             data = docs.format()
@@ -129,7 +135,8 @@ def create_app(test_config=None):
 
     #CREATE DOCUMENT
     @app.route('/documents', methods=['POST'])
-    def post_documents():
+    @requires_auth('post:documents')
+    def post_documents(payload):
         try:
             body = request.get_json()
             request_name = body.get('name')
@@ -149,7 +156,8 @@ def create_app(test_config=None):
 
     #EDIT DOCUMENT
     @app.route('/documents/<int:document_id>', methods=['PATCH'])
-    def patch_documents(document_id):
+    @requires_auth('patch:documents')
+    def patch_documents(payload, document_id):
         try:
             doc = Document.query.filter(Document.id == document_id).one_or_none()
             body = request.get_json()
@@ -176,6 +184,7 @@ def create_app(test_config=None):
 
     #DELETE DOCUMENT
     @app.route('/documents/<int:document_id>', methods=['DELETE'])
+    @requires_auth('delete:documents')
     def delete_document(document_id):
         doc = Document.query.filter(Document.id == document_id).one_or_none()
         if doc is None:
@@ -192,6 +201,7 @@ def create_app(test_config=None):
 
     #GET CAR DOCUMENTS
     @app.route('/cars/<int:car_id>/documents')
+    @requires_auth('get:documents')
     def get_car_documents(car_id):
         try:
             docs = Document.query.filter(Document.car_id == car_id)
@@ -219,6 +229,14 @@ def create_app(test_config=None):
             'status_code': 400,
             'success': False
         }), 400
+
+    @app.errorhandler(401)
+    def permissions_error(error):
+        return jsonify({
+            'message': 'Permissions error',
+            'status_code': 401,
+            'success': False
+        }), 401
 
     return app
 
