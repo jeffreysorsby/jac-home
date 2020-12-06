@@ -208,8 +208,11 @@ def create_app(test_config=None):
         try:
             docs = Document.query.filter(Document.car_id == car_id)
             data = [doc.format() for doc in docs]
+            if data is None:
+                abort(400)
         except:
             abort(400)
+        
 
         return jsonify({
             'success': True,
@@ -232,13 +235,21 @@ def create_app(test_config=None):
             'success': False
         }), 400
 
-    @app.errorhandler(401)
-    def permissions_error(error):
+    @app.errorhandler(AuthError)
+    def permissions_error(AuthError):
         return jsonify({
-            'message': 'Permissions error',
+            'message': 'Auth error',
             'status_code': 401,
             'success': False
         }), 401
+
+    @app.errorhandler(405)
+    def permissions_error(error):
+        return jsonify({
+            'message': 'Method not allowed',
+            'status_code': 405,
+            'success': False
+        }), 405
 
     return app
 

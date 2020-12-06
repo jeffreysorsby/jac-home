@@ -64,24 +64,40 @@ class JACHomeTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue(data['data'])
 
+    def test_get_cars_non_existing_id(self):
+        res = self.client().get('/cars/99', headers={"Authorization": "Bearer {}".format(os.environ.get('ADMIN_TOKEN'))})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+
     def test_delete_cars_admin(self):
-        res = self.client().delete('/cars/9', headers={"Authorization": "Bearer {}".format(os.environ.get('ADMIN_TOKEN'))})
+        res = self.client().delete('/cars/13', headers={"Authorization": "Bearer {}".format(os.environ.get('ADMIN_TOKEN'))})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
 
     def test_delete_cars_user(self):
-        res = self.client().delete('/cars/6', headers={"Authorization": "Bearer {}".format(os.environ.get('USER_TOKEN'))})
+        res = self.client().delete('/cars/13', headers={"Authorization": "Bearer {}".format(os.environ.get('USER_TOKEN'))})
+        data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
 
-    def test_post_documents(self):
+    def test_post_documents_admin(self):
         res = self.client().post('/documents', json={"car_id": 2, "doc_type": "JPG", "image_url": "https://11.com", "name": "PDF", "url": "https://11.com"}, headers={"Authorization": "Bearer {}".format(os.environ.get('ADMIN_TOKEN'))})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
+
+    def test_post_documents_user(self):
+        res = self.client().post('/documents', json={"car_id": 2, "doc_type": "JPG", "image_url": "https://11.com", "name": "PDF", "url": "https://11.com"}, headers={"Authorization": "Bearer {}".format(os.environ.get('USER_TOKEN'))})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
 
     def test_get_documents(self):
         res = self.client().get('/documents', headers={"Authorization": "Bearer {}".format(os.environ.get('ADMIN_TOKEN'))})
@@ -90,19 +106,40 @@ class JACHomeTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
 
-    def test_patch_documents(self):
-        res = self.client().patch('/documents/11', json={"car_id": 2, "doc_type": "PNG", "image_url": "https://png.com", "name": "PDF", "url": "https://11.com"}, headers={"Authorization": "Bearer {}".format(os.environ.get('ADMIN_TOKEN'))})
+    def test_get_documents_non_existing(self):
+        res = self.client().get('/documents/99', headers={"Authorization": "Bearer {}".format(os.environ.get('ADMIN_TOKEN'))})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+
+    def test_patch_documents_admin(self):
+        res = self.client().patch('/documents/14', json={"car_id": 2, "doc_type": "PNG", "image_url": "https://png.com", "name": "PDF", "url": "https://11.com"}, headers={"Authorization": "Bearer {}".format(os.environ.get('ADMIN_TOKEN'))})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
 
-    def test_delete_document(self):
-        res = self.client().delete('/documents/9', headers={"Authorization": "Bearer {}".format(os.environ.get('ADMIN_TOKEN'))})
+    def test_patch_documents_user(self):
+        res = self.client().patch('/documents/14', json={"car_id": 2, "doc_type": "PNG", "image_url": "https://png.com", "name": "PDF", "url": "https://11.com"}, headers={"Authorization": "Bearer {}".format(os.environ.get('USER_TOKEN'))})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+
+    def test_delete_document_admin(self):
+        res = self.client().delete('/documents/13', headers={"Authorization": "Bearer {}".format(os.environ.get('ADMIN_TOKEN'))})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
+
+    def test_delete_document_user(self):
+        res = self.client().delete('/documents/13', headers={"Authorization": "Bearer {}".format(os.environ.get('USER_TOKEN'))})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
 
     def test_get_car_documents(self):
         res = self.client().get('/cars/2/documents', headers={"Authorization": "Bearer {}".format(os.environ.get('ADMIN_TOKEN'))})
@@ -110,6 +147,13 @@ class JACHomeTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
+
+    def test_get_car_documents_no_auth(self):
+        res = self.client().get('/cars/2/documents')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
