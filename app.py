@@ -244,7 +244,7 @@ def create_app(test_config=None):
         }), 401
 
     @app.errorhandler(405)
-    def permissions_error(error):
+    def method_not_allowed(error):
         return jsonify({
             'message': 'Method not allowed',
             'status_code': 405,
