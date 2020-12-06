@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, create_engine
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Integer
+from sqlalchemy import Integer, Column, String
 import json
 import os
 

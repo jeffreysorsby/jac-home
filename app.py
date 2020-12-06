@@ -117,9 +117,10 @@ def create_app(test_config=None):
             abort(400)
         
         return jsonify({
-            'data': data
+            'data': data,
+            'success': True
             })
-
+    #GET DOCUMENT BY ID
     @app.route('/documents/<int:document_id>', methods=['GET'])
     @requires_auth('get:documents')
     def get_documents_byid(payload, document_id):
@@ -130,7 +131,8 @@ def create_app(test_config=None):
             abort(400)
         
         return jsonify({
-            'data': data
+            'data': data,
+            'success': True
             })
 
     #CREATE DOCUMENT
@@ -185,7 +187,7 @@ def create_app(test_config=None):
     #DELETE DOCUMENT
     @app.route('/documents/<int:document_id>', methods=['DELETE'])
     @requires_auth('delete:documents')
-    def delete_document(document_id):
+    def delete_document(payload, document_id):
         doc = Document.query.filter(Document.id == document_id).one_or_none()
         if doc is None:
             abort(400)
@@ -202,7 +204,7 @@ def create_app(test_config=None):
     #GET CAR DOCUMENTS
     @app.route('/cars/<int:car_id>/documents')
     @requires_auth('get:documents')
-    def get_car_documents(car_id):
+    def get_car_documents(payload, car_id):
         try:
             docs = Document.query.filter(Document.car_id == car_id)
             data = [doc.format() for doc in docs]
