@@ -1,13 +1,15 @@
 import os
-from flask import Flask, jsonify, abort, request
+from flask import Flask, jsonify, abort, request, render_template
 from models import setup_db, Car, Document
 from flask_cors import CORS
 from auth import AuthError, requires_auth
+from flask_bootstrap import Bootstrap
 
 def create_app(test_config=None):
 
     app = Flask(__name__)
     setup_db(app)
+    Bootstrap(app)
     CORS(app)
     CORS(app, resources={r"*": {"origins": "*"}})
 
@@ -18,10 +20,15 @@ def create_app(test_config=None):
         response.headers.add('Access-Control-Allow-Credentials', 'true')
         return response
 
+    @app.route('/')
+    def home():
+        resp = get_cars().get_json()
+        data = resp.get('data')
+        return render_template('home.html', cars=data)
+
     #GET ALL CARS
     @app.route('/cars', methods=['GET'])
-    @requires_auth('get:cars')
-    def get_cars(payload):
+    def get_cars():
         try:
             cars = Car.query.all()
             data = [car.format() for car in cars]
