@@ -27,6 +27,7 @@ class Car(db.Model):
   name = db.Column(db.String(100), nullable = False)
   image_url = db.Column(db.String(250), nullable = False)
   endpoint = db.Column(db.String(250), nullable = False)
+  category = db.Column(db.String(250), nullable = False)
   documents = db.relationship('Document', backref = 'model', passive_deletes = True, lazy = True)
 
   def __init__(self, name, image_url, endpoint):
@@ -50,7 +51,8 @@ class Car(db.Model):
     'id': self.id,
     'name': self.name,
     'image_url': self.image_url,
-    'endpoint': self.endpoint
+    'endpoint': self.endpoint,
+    'category': self.category
     }
 
 class Document(db.Model):

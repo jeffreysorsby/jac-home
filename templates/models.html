@@ -11,12 +11,12 @@
 {% block content %}
   <div class="container-fluid">
     <div class="row text-center">
-        <h3 class="headermessage">JAC Home</h3>
+        <h3 class="headermessage">Documentos {{name}}</h3>
     </div>
     <div class="row">
-        {% for f in cars %}
-        <div class="image-block col-sm-4" style="background: url({{ f.image_url }}) no-repeat center top;background-size:cover;">
-            <p><a href="/model/{{ f.endpoint }}">{{ f.name }}</a></p>
+        {% for d in docs %}
+        <div class="image-block col-sm-4" style="background: url({{ d.image_url }}) no-repeat center top; background-size:contain;">
+            <p><a target="_blank" href="{{ d.url }}">{{ d.name }}</a></p>
         </div>
         {% endfor %}
     </div>
@@ -54,8 +54,7 @@
 }
 
 a {
-    top: 0;
-    right: 0;
+    color: black;
 }
 
 </style>

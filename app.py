@@ -20,11 +20,25 @@ def create_app(test_config=None):
         response.headers.add('Access-Control-Allow-Credentials', 'true')
         return response
 
+    #HOME
     @app.route('/')
     def home():
         resp = get_cars().get_json()
         data = resp.get('data')
         return render_template('home.html', cars=data)
+
+    #MODELS
+    @app.route('/model/<endpoint>')
+    def get_models(endpoint):
+        try:
+            car = Car.query.filter(Car.endpoint == endpoint).one_or_none()
+            name = car.name
+            resp = get_car_documents(car.id).get_json()
+            data = resp.get('documents')
+        except:
+            abort(404)
+        
+        return render_template('models.html', docs=data, name=name)
 
     #GET ALL CARS
     @app.route('/cars', methods=['GET'])
@@ -63,9 +77,10 @@ def create_app(test_config=None):
         request_name = body.get('name')
         request_image_url = body.get('image_url')
         request_endpoint = body.get('endpoint')
+        request_category = body.get('category')
 
         try:
-            new_car = Car(name=request_name, image_url=request_image_url, endpoint=request_endpoint)
+            new_car = Car(name=request_name, image_url=request_image_url, endpoint=request_endpoint, category=request_category)
             new_car.insert()
         except:
             abort(400)
@@ -104,6 +119,7 @@ def create_app(test_config=None):
             car.name = body.get('name')
             car.image_url = body.get('image_url')
             car.endpoint = body.get('endpoint')
+            car.category = body.get('category')
             car.update()
         except:
             abort(400)
@@ -115,8 +131,7 @@ def create_app(test_config=None):
 
     #GET ALL DOCUMENTS
     @app.route('/documents', methods=['GET'])
-    @requires_auth('get:documents')
-    def get_documents(payload):
+    def get_documents():
         try:
             docs = Document.query.all()
             data = [doc.format() for doc in docs]
@@ -208,7 +223,6 @@ def create_app(test_config=None):
 
     #GET CAR DOCUMENTS
     @app.route('/cars/<int:car_id>/documents')
-    @requires_auth('get:documents')
     def get_car_documents(car_id):
         try:
             docs = Document.query.filter(Document.car_id == car_id)
@@ -237,8 +251,8 @@ def create_app(test_config=None):
             'success': False
         }), 400
 
-    @app.errorhandler(401)
-    def permissions_error(error):
+    @app.errorhandler(AuthError)
+    def permissions_error(AuthError):
         return jsonify({
             'message': 'Permissions error',
             'status_code': 401,
