@@ -30,10 +30,11 @@ class Car(db.Model):
   category = db.Column(db.String(250), nullable = False)
   documents = db.relationship('Document', backref = 'model', passive_deletes = True, lazy = True)
 
-  def __init__(self, name, image_url, endpoint):
+  def __init__(self, name, image_url, endpoint, category):
     self.name = name
     self.image_url = image_url
     self.endpoint = endpoint
+    self.category = category
   
   def insert(self):
     db.session.add(self)

@@ -1,0 +1,34 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}New Car{% endblock %}
+{% block content %}
+  <div class="form-wrapper">
+    <form method="post" class="form" action="/cars">
+        {{ form.csrf_token }}
+      <div class="form-group">
+        <label for="name">Name</label>
+        {{ form.name(class_ = 'form-control', autofocus = true) }}
+      </div>
+      <div class="form-group">
+        <label for="image-url">Image URL</label>
+        {{ form.image_url(class_ = 'form-control', autofocus = true) }}
+      </div>
+      <div class="form-group">
+        <label for="endpoint">Endpoint</label>
+        {{ form.endpoint(class_ = 'form-control', autofocus = true) }}
+      </div>
+      <div class="form-group">
+        <label for="category">Category</label>
+        {{ form.category(class_ = 'form-control', autofocus = true) }}
+      </div>
+      <input type="submit" value="Create Car" class="btn btn-primary btn-lg btn-block">
+    </form>
+    <style>
+        div, input {
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+}
+    </style>
+  </div>
+{% endblock %}

@@ -15,12 +15,30 @@
     </div>
     <div class="row">
         {% for d in docs %}
-        <div class="image-block col-sm-4" style="background: url({{ d.image_url }}) no-repeat center top; background-size:contain;">
-            <p><a target="_blank" href="{{ d.url }}">{{ d.name }}</a></p>
-        </div>
+        <div class="col-sm-3">
+            <div class="card card-block">
+              <img class="card-img-top" data-src="holder.js/100px180/" alt="100%x180" src="{{ d.image_url }}" data-holder-rendered="true" style="height: 220px; width: 100%; display: block;">
+              <div class="card-block">
+                <h4 class="card-title">{{d.name}}</h4>
+                <p class="card-text">{{d.doc_type}}</p>
+                <a style="margin: 0 auto; display: block;" onclick="copyURI(event)" href="{{d.url}}" id="myInput" class="btn btn-primary">Copiar URL</a>
+              </div>
+              </div>
+            </div>
         {% endfor %}
     </div>
 </div>
+
+<script>
+function copyURI(evt) {
+    evt.preventDefault();
+    navigator.clipboard.writeText(evt.target.getAttribute('href')).then(() => {
+      alert('URL copiada al portapapeles!')
+    }, () => {
+      alert('Hubo un error!')
+    });
+}
+</script>
 
 <style>
 .headermessage {

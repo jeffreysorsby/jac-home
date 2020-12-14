@@ -1,18 +1,24 @@
 import os
-from flask import Flask, jsonify, abort, request, render_template
+from flask import Flask, jsonify, abort, request, render_template, flash, url_for, redirect
 from models import setup_db, Car, Document
 from flask_cors import CORS
 from auth import AuthError, requires_auth
 from flask_bootstrap import Bootstrap
+from forms import CarForm, DocumentForm
+from flask_wtf.csrf import CSRFProtect
+
 
 def create_app(test_config=None):
 
     app = Flask(__name__)
+    app.config.from_object('config')
     setup_db(app)
     Bootstrap(app)
     CORS(app)
     CORS(app, resources={r"*": {"origins": "*"}})
-
+    csrf = CSRFProtect(app)
+    csrf.init_app(app)
+    
     @app.after_request
     def after_request(response):
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization, true')
@@ -56,8 +62,7 @@ def create_app(test_config=None):
 
     #GET CARS BY ID
     @app.route('/cars/<int:car_id>', methods=['GET'])
-    @requires_auth('get:cars')
-    def get_cars_byid(payload, car_id):
+    def get_cars_byid(car_id):
         try:
             cars = Car.query.filter(Car.id == car_id).one_or_none()
             data = cars.format()
@@ -71,15 +76,12 @@ def create_app(test_config=None):
 
     #CREATE CARS
     @app.route('/cars', methods=['POST'])
-    @requires_auth('post:cars')
-    def post_car(payload):
-        body = request.get_json()
-        request_name = body.get('name')
-        request_image_url = body.get('image_url')
-        request_endpoint = body.get('endpoint')
-        request_category = body.get('category')
-
+    def post_car():
         try:
+            request_name = request.form.get('name')
+            request_image_url = request.form.get('image_url')
+            request_endpoint = request.form.get('endpoint')
+            request_category = request.form.get('category')
             new_car = Car(name=request_name, image_url=request_image_url, endpoint=request_endpoint, category=request_category)
             new_car.insert()
         except:
@@ -90,10 +92,15 @@ def create_app(test_config=None):
             'new_car': new_car.format()
         })
 
+    #CREATE CARS FORM
+    @app.route('/cars/create', methods=['GET'])
+    def post_car_form():
+        form = CarForm()
+        return render_template('new_car.html', form=form)
+
     #DELETE CARS
     @app.route('/cars/<int:car_id>', methods=['DELETE'])
-    @requires_auth('delete:cars')
-    def delete_car(payload, car_id):
+    def delete_car(car_id):
         car = Car.query.filter(Car.id == car_id).one_or_none()
         if car is None:
             abort(400)
@@ -107,27 +114,40 @@ def create_app(test_config=None):
         except:
             abort(400)
 
-    #PATCH CARS
-    @app.route('/cars/<int:car_id>', methods=['PATCH'])
-    @requires_auth('patch:cars')
-    def edit_car(payload, car_id):
+    #EDIT CARS FORM
+    @app.route('/cars/edit/<int:car_id>', methods=['GET'])
+    def edit_car_form(car_id):
+        car = Car.query.filter(Car.id == car_id).one_or_none()
+        form = CarForm(obj=car)
+
+        return render_template('edit_car.html', form=form, car=car)
+
+    #EDIT CARS
+    @app.route('/cars/<int:car_id>', methods=['POST'])
+    def edit_car(car_id):
+        error = False
         try:
+            form = CarForm(request.form)
             car = Car.query.filter(Car.id == car_id).one_or_none()
             if car is None:
                 abort(404)
-            body = request.get_json()
-            car.name = body.get('name')
-            car.image_url = body.get('image_url')
-            car.endpoint = body.get('endpoint')
-            car.category = body.get('category')
+            car.name = request.form.get('name')
+            car.image_url = request.form.get('image_url')
+            car.endpoint = request.form.get('endpoint')
+            car.category = request.form.get('category')
             car.update()
         except:
             abort(400)
+            error = True
+
+        if not error:
+            flash('Car successfully updated!')
+        else:
+            flash('Car was not updated!')
         
-        return jsonify({
-            'success': True,
-            'car': [car.format()]
-        })
+        
+        return redirect(url_for('home'))
+
 
     #GET ALL DOCUMENTS
     @app.route('/documents', methods=['GET'])
@@ -143,8 +163,7 @@ def create_app(test_config=None):
             })
 
     @app.route('/documents/<int:document_id>', methods=['GET'])
-    @requires_auth('get:documents')
-    def get_documents_byid(payload, document_id):
+    def get_documents_byid(document_id):
         try:
             docs = Document.query.filter(Document.id == document_id).one_or_none()
             data = docs.format()
@@ -155,39 +174,51 @@ def create_app(test_config=None):
             'data': data
             })
 
+    #CREATE DOCUMENT FORM
+    @app.route('/documents/create', methods=['GET'])
+    def get_document_form():
+        form = DocumentForm()
+        return render_template('new_document.html', form=form)
+
+
     #CREATE DOCUMENT
     @app.route('/documents', methods=['POST'])
-    @requires_auth('post:documents')
-    def post_documents(payload):
+    def post_documents():
         try:
-            body = request.get_json()
-            request_name = body.get('name')
-            request_url = body.get('url')
-            request_image_url = body.get('image_url')
-            request_car_id = body.get('car_id')
-            request_doc_type = body.get('doc_type')
+            request_name = request.form.get('name')
+            request_url = request.form.get('url')
+            request_image_url = request.form.get('image_url')
+            request_car_id = request.form.get('car_id')
+            request_doc_type = request.form.get('doc_type')
             document = Document(name=request_name, url=request_url, image_url=request_image_url, car_id=request_car_id, doc_type=request_doc_type)
             document.insert()
         except:
             abort(400)
-
         return jsonify({
             'success': True,
             'document': document.format()
         })
 
+    #EDIT DOCUMENT FORM
+    @app.route('/documents/edit/<int:document_id>')
+    def edit_document_form(document_id):
+        doc = Document.query.filter(Document.id == document_id).one_or_none()
+        form = DocumentForm(obj=doc)
+
+        return render_template('edit_document.html', form=form, document=doc)
+
     #EDIT DOCUMENT
-    @app.route('/documents/<int:document_id>', methods=['PATCH'])
-    @requires_auth('patch:documents')
-    def patch_documents(payload, document_id):
+    @app.route('/documents/<int:document_id>', methods=['POST'])
+    def edit_documents(document_id):
+        error = False
         try:
+            form = DocumentForm(request.form)
             doc = Document.query.filter(Document.id == document_id).one_or_none()
-            body = request.get_json()
-            request_name = body.get('name')
-            request_url = body.get('url')
-            request_image_url = body.get('image_url')
-            request_car_id = body.get('car_id')
-            request_doc_type = body.get('doc_type')
+            request_name = request.form.get('name')
+            request_url = request.form.get('url')
+            request_image_url = request.form.get('image_url')
+            request_car_id = request.form.get('car_id')
+            request_doc_type = request.form.get('doc_type')
 
             doc.name = request_name
             doc.url = request_url
@@ -198,15 +229,17 @@ def create_app(test_config=None):
 
         except:
             abort(400)
+            error = True
 
-        return jsonify({
-            'success': True,
-            'document': doc.format()
-        })
+        if not error:
+            flash('Document successfully updated!')
+        else:
+            flash('Document was not updated!')
+
+        return redirect(url_for('home'))
 
     #DELETE DOCUMENT
     @app.route('/documents/<int:document_id>', methods=['DELETE'])
-    @requires_auth('delete:documents')
     def delete_document(document_id):
         doc = Document.query.filter(Document.id == document_id).one_or_none()
         if doc is None:

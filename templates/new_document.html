@@ -1,0 +1,38 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}New Document{% endblock %}
+{% block content %}
+  <div class="form-wrapper">
+    <form method="post" class="form" action="/documents">
+        {{ form.csrf_token }}
+      <div class="form-group">
+        <label for="name">Name</label>
+        {{ form.name(class_ = 'form-control', autofocus = true) }}
+      </div>
+      <div class="form-group">
+        <label for="url">Document URL</label>
+        {{ form.url(class_ = 'form-control', autofocus = true) }}
+      </div>
+      <div class="form-group">
+        <label for="image-url">Image URL</label>
+        {{ form.image_url(class_ = 'form-control', autofocus = true) }}
+      </div>
+      <div class="form-group">
+        <label for="doc_type">Document Type</label>
+        {{ form.doc_type(class_ = 'form-control', autofocus = true) }}
+      </div>
+      <div class="form-group">
+        <label for="car_id">Car ID</label>
+        {{ form.car_id(class_ = 'form-control', autofocus = true) }}
+      </div>
+      <input type="submit" value="Create Document" class="btn btn-primary btn-lg btn-block">
+    </form>
+    <style>
+        div, input {
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+}
+    </style>
+  </div>
+{% endblock %}
