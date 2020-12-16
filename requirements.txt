@@ -20,6 +20,8 @@ Flask==1.1.2
 Flask-Bootstrap==3.3.7.1
 Flask-Cors==3.0.9
 Flask-Migrate==2.5.3
+flask-nav==0.6
+flask-s3-viewer==0.2.1
 Flask-Script==2.0.6
 Flask-Session==0.3.2
 Flask-SQLAlchemy==2.4.4

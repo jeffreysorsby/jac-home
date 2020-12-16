@@ -1,0 +1,79 @@
+{% extends "bootstrap/base.html" %}
+{% block html_attribs %} lang="en"{% endblock %}
+{% block title %}JAC Home{% endblock %}
+
+{% block navbar %}
+<div class="navbar navbar-fixed-top">
+  <!-- ... -->
+</div>
+{% endblock %}
+
+{% block content %}
+  <div class="container-fluid">
+    <div class="row text-center">
+        <h3 class="headermessage">Documentos</h3>
+    </div>
+    <div class="row">
+        {% for d in docs %}
+        <div class="col-sm-3">
+            <div class="card card-block">
+              <img class="card-img-top" data-src="holder.js/100px180/" alt="100%x180" src="{{ d.image_url }}" data-holder-rendered="true" style="height: 220px; width: 100%; display: block;">
+              <div class="card-block">
+                <h4 class="card-title">{{d.name}}</h4>
+                <p class="card-text">{{d.doc_type}}</p>
+                <a style="margin: 0 auto; display: block;" onclick="copyURI(event)" href="{{d.url}}" id="myInput" class="btn btn-primary">Copiar URL</a>
+              </div>
+              </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function copyURI(evt) {
+    evt.preventDefault();
+    navigator.clipboard.writeText(evt.target.getAttribute('href')).then(() => {
+      alert('URL copiada al portapapeles!')
+    }, () => {
+      alert('Hubo un error!')
+    });
+}
+</script>
+
+<style>
+.headermessage {
+  margin: 19px;
+  color: black;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+}
+.image-block {
+    border: 3px solid white ;
+    background-color: black;
+    padding: 0px;    
+    margin: 0px;
+    height:310px;
+    text-align: center;
+    vertical-align: bottom;
+}
+.image-block > p {
+    width: 100%;
+    height: 100%;
+    font-weight: normal;
+    font-size: 19px;
+    padding-top: 150px;
+    background-color: rgba(3,3,3,0.0);
+    color: rgba(6,6,6,0.0);
+}
+.image-block:hover > p {
+    background-color: rgba(3,3,3,0.5);    
+    color: white;    
+}
+
+a {
+    color: black;
+}
+
+</style>
+{% endblock %}

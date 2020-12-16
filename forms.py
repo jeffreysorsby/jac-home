@@ -13,4 +13,4 @@ class DocumentForm(FlaskForm):
     url = StringField('url', validators=[DataRequired()])
     image_url = StringField('image_url', validators=[DataRequired()])
     doc_type = StringField('doc_type', validators=[DataRequired()])
-    car_id = IntegerField('car_id', validators=[DataRequired()])
+    car_id = SelectField('car_id', choices=[], validators=[DataRequired()])

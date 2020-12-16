@@ -1,12 +1,13 @@
 import os
-from flask import Flask, jsonify, abort, request, render_template, flash, url_for, redirect
+from flask import Flask, jsonify, abort, request, render_template, flash, url_for, redirect, send_file
 from models import setup_db, Car, Document
 from flask_cors import CORS
 from auth import AuthError, requires_auth
 from flask_bootstrap import Bootstrap
 from forms import CarForm, DocumentForm
 from flask_wtf.csrf import CSRFProtect
-
+from flask_nav import Nav
+from flask_nav.elements import Navbar, View, Subgroup
 
 def create_app(test_config=None):
 
@@ -14,6 +15,8 @@ def create_app(test_config=None):
     app.config.from_object('config')
     setup_db(app)
     Bootstrap(app)
+    nav = Nav(app)
+    nav.init_app(app)
     CORS(app)
     CORS(app, resources={r"*": {"origins": "*"}})
     csrf = CSRFProtect(app)
@@ -25,6 +28,22 @@ def create_app(test_config=None):
         response.headers.add('Access-Control-Allow-Methods', 'GET, PATCH, POST, DELETE, OPTIONS')
         response.headers.add('Access-Control-Allow-Credentials', 'true')
         return response
+
+    @nav.navigation()
+    def navbar_home():
+        
+        return Navbar(
+            'JAC Home',
+           View('Home', 'home'),
+           Subgroup(
+               'Cars',
+               View('Create', 'post_car_form'),
+               ),
+            Subgroup(
+                'Documents',
+                View('Create', 'get_document_form')
+            )      
+    )
 
     #HOME
     @app.route('/')
@@ -158,9 +177,22 @@ def create_app(test_config=None):
         except:
             abort(400)
         
+        return render_template('documents.html', docs=data)
+
+    @app.route('/all-documents')
+    def get_all_documents():
+        try:
+            docs = Document.query.join(Car).all()
+            data = [doc.format() for doc in docs]
+            
+        except:
+            abort(400)
+        
         return jsonify({
-            'data': data
-            })
+            "data": data
+        })
+
+
 
     @app.route('/documents/<int:document_id>', methods=['GET'])
     def get_documents_byid(document_id):
@@ -177,7 +209,10 @@ def create_app(test_config=None):
     #CREATE DOCUMENT FORM
     @app.route('/documents/create', methods=['GET'])
     def get_document_form():
+        cars = Car.query.all()
+        cars = [(car.id, car.name) for car in cars]
         form = DocumentForm()
+        form.car_id.choices = cars
         return render_template('new_document.html', form=form)
 
 
@@ -194,10 +229,7 @@ def create_app(test_config=None):
             document.insert()
         except:
             abort(400)
-        return jsonify({
-            'success': True,
-            'document': document.format()
-        })
+        return redirect(url_for('home'))
 
     #EDIT DOCUMENT FORM
     @app.route('/documents/edit/<int:document_id>')

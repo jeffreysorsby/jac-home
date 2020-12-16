@@ -1,5 +1,8 @@
-{% extends "bootstrap/base.html" %}
+{% extends "home.html" %}
 {% block title %}New Car{% endblock %}
+{% block navbar %}
+{{nav.navbar_home.render()}}
+{% endblock %}
 {% block content %}
   <div class="form-wrapper">
     <form method="post" class="form" action="/cars">
@@ -23,12 +26,12 @@
       <input type="submit" value="Create Car" class="btn btn-primary btn-lg btn-block">
     </form>
     <style>
-        div, input {
+        .form-wrapper {
   padding-top: 10px;
   padding-right: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
-}
+          }
     </style>
   </div>
 {% endblock %}
