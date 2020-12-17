@@ -69,7 +69,6 @@ class CarView(ModelView):
     column_searchable_list = ['name']
     create_modal = True
     edit_modal = True
-    form_base_class = SecureForm
     form_choices = {
     'category': [
         ('Autos', 'Autos'),
