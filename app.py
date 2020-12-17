@@ -5,7 +5,7 @@ from flask_cors import CORS
 from auth import AuthError, requires_auth
 from flask_bootstrap import Bootstrap
 from forms import CarForm, DocumentForm
-from flask_wtf.csrf import CSRFProtect
+from flask_wtf import CSRFProtect
 from flask_nav import Nav
 from flask_nav.elements import Navbar, View, Subgroup, Link
 from flask_admin.contrib.sqla import ModelView
