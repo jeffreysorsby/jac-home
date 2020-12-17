@@ -18,6 +18,7 @@ def setup_db(app, database_path=database_path):
     db.app = app
     db.init_app(app)
     db.create_all()
+    return db
 
 
 class Car(db.Model):  
@@ -29,6 +30,9 @@ class Car(db.Model):
   endpoint = db.Column(db.String(250), nullable = False)
   category = db.Column(db.String(250), nullable = False)
   documents = db.relationship('Document', backref = 'model', passive_deletes = True, lazy = True)
+  
+  def __repr__(self):
+    return f'{self.name}'
 
   def __init__(self, name, image_url, endpoint, category):
     self.name = name
