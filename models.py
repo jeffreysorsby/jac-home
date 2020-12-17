@@ -29,7 +29,7 @@ class Car(db.Model):
   image_url = db.Column(db.String(250), nullable = False)
   endpoint = db.Column(db.String(250), nullable = False)
   category = db.Column(db.String(250), nullable = False)
-  documents = db.relationship('Document', backref = 'model', passive_deletes = True, lazy = True)
+  documents = db.relationship('Document', backref = 'car', passive_deletes = True, lazy = True)
   
   def __repr__(self):
     return f'{self.name}'
@@ -69,6 +69,10 @@ class Document(db.Model):
     image_url = db.Column(db.String(250), nullable = False)
     doc_type = db.Column(db.String(250), nullable = False)
     car_id = db.Column(db.Integer, db.ForeignKey('car.id', ondelete = 'CASCADE'), nullable = False)
+
+    def __repr__(self):
+      return f'{self.name}'
+
 
     def __init__(self, name, url, image_url, doc_type, car_id):
       self.name = name
