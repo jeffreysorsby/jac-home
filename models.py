@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer
 import json
 import os
+from flask_admin.contrib.sqla import ModelView
 
 database_path = os.environ['DATABASE_URL']
 
@@ -59,6 +60,24 @@ class Car(db.Model):
     'endpoint': self.endpoint,
     'category': self.category
     }
+
+class CarView(ModelView):
+    column_hide_backrefs = True
+    can_export = True
+    column_exclude_list = ['documents']
+    column_searchable_list = ['name']
+    create_modal = True
+    edit_modal = True
+    form_choices = {
+    'category': [
+        ('Autos', 'Autos'),
+        ('EVs', 'EVs'),
+        ('SUVs', 'SUVs'),
+        ('Pickups', 'Pickups'),
+        ('LCVs', 'LCVs')
+    ]
+}
+    
 
 class Document(db.Model):
     __tablename__= 'document'

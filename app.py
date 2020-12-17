@@ -1,6 +1,6 @@
 import os
-from flask import Flask, jsonify, abort, request, render_template, flash, url_for, redirect, send_file
-from models import setup_db, Car, Document
+from flask import Flask, jsonify, abort, request, render_template, flash, url_for, redirect, send_file, send_from_directory
+from models import setup_db, Car, Document, CarView
 from flask_cors import CORS
 from auth import AuthError, requires_auth
 from flask_bootstrap import Bootstrap
@@ -10,7 +10,10 @@ from flask_nav import Nav
 from flask_nav.elements import Navbar, View, Subgroup
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin
-
+from flask_admin.contrib.fileadmin.s3 import S3FileAdmin
+from flask_babelex import Babel
+from flask_admin.contrib.fileadmin import FileAdmin
+import os.path as op
 
 
 app = Flask(__name__)
@@ -23,11 +26,15 @@ CORS(app)
 CORS(app, resources={r"*": {"origins": "*"}})
 csrf = CSRFProtect(app)
 csrf.init_app(app)
+babel = Babel(app)
 
 app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
 admin = Admin(app, name='jac-admin', template_mode='bootstrap3')
-admin.add_view(ModelView(Car, db.session))
+admin.add_view(CarView(Car, db.session))
 admin.add_view(ModelView(Document, db.session))
+#admin.add_view(S3FileAdmin('jac.mx', 'us-east-1', 'AKIAIUASAYLUYR7MQ4OA', '0V0qnIo5KRsjxRy1a9glVN+xHteyAFzed2p+YE0I'))
+path = op.join(op.dirname(__file__), 'files')
+admin.add_view(FileAdmin(path, '/files/', name='Archivos'))
 
 @app.after_request
 def after_request(response):
@@ -35,20 +42,19 @@ def after_request(response):
     response.headers.add('Access-Control-Allow-Methods', 'GET, PATCH, POST, DELETE, OPTIONS')
     response.headers.add('Access-Control-Allow-Credentials', 'true')
     return response
+
+@babel.localeselector
+def get_locale():
+        # Put your logic here. Application can store locale in
+        # user profile, cookie, session, etc.
+        return 'es'
+
 @nav.navigation()
 def navbar_home():
-    
     return Navbar(
         'JAC Home',
-       View('Home', 'home'),
-       Subgroup(
-           'Cars',
-           View('Create', 'post_car_form'),
-           ),
-        Subgroup(
-            'Documents',
-            View('Create', 'get_document_form')
-        )      
+       View('Modelos', 'home'),
+       View('Documentos', 'get_documents')
 )
 #HOME
 @app.route('/')
@@ -56,6 +62,24 @@ def home():
     resp = get_cars().get_json()
     data = resp.get('data')
     return render_template('home.html', cars=data)
+
+@app.route('/files/<path:filename>')
+def download(filename):
+    uploads = os.path.join(app.root_path, 'files')
+    return send_from_directory(directory=uploads, filename=filename)
+
+def get_resource(path):  # pragma: no cover
+    mimetypes = {
+        ".css": "text/css",
+        ".html": "text/html",
+        ".js": "application/javascript",
+    }
+    complete_path = os.path.join(root_dir(), path)
+    ext = os.path.splitext(path)[1]
+    mimetype = mimetypes.get(ext, "text/html")
+    content = get_file(complete_path)
+    return Response(content, mimetype=mimetype)
+
 #MODELS
 @app.route('/model/<endpoint>')
 def get_models(endpoint):
