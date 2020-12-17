@@ -7,7 +7,7 @@ from flask_bootstrap import Bootstrap
 from forms import CarForm, DocumentForm
 from flask_wtf.csrf import CSRFProtect
 from flask_nav import Nav
-from flask_nav.elements import Navbar, View, Subgroup
+from flask_nav.elements import Navbar, View, Subgroup, Link
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin
 from flask_admin.contrib.fileadmin.s3 import S3FileAdmin
@@ -28,7 +28,7 @@ csrf = CSRFProtect(app)
 csrf.init_app(app)
 babel = Babel(app)
 
-app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
+app.config['FLASK_ADMIN_SWATCH'] = 'yeti'
 admin = Admin(app, name='jac-admin', template_mode='bootstrap3')
 admin.add_view(CarView(Car, db.session))
 admin.add_view(ModelView(Document, db.session))
@@ -54,8 +54,14 @@ def navbar_home():
     return Navbar(
         'JAC Home',
        View('Modelos', 'home'),
-       View('Documentos', 'get_documents')
+       View('Documentos', 'get_documents'),
+       Link('Admin', '/admin')
 )
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 #HOME
 @app.route('/')
 def home():
@@ -68,17 +74,6 @@ def download(filename):
     uploads = os.path.join(app.root_path, 'files')
     return send_from_directory(directory=uploads, filename=filename)
 
-def get_resource(path):  # pragma: no cover
-    mimetypes = {
-        ".css": "text/css",
-        ".html": "text/html",
-        ".js": "application/javascript",
-    }
-    complete_path = os.path.join(root_dir(), path)
-    ext = os.path.splitext(path)[1]
-    mimetype = mimetypes.get(ext, "text/html")
-    content = get_file(complete_path)
-    return Response(content, mimetype=mimetype)
 
 #MODELS
 @app.route('/model/<endpoint>')

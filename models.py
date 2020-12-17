@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, create_engine
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Integer
+from flask_sqlalchemy import SQLAlchemy, Model
+from sqlalchemy import Integer, Column
 import json
 import os
 from flask_admin.contrib.sqla import ModelView
