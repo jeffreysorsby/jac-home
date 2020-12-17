@@ -24,10 +24,9 @@ nav.init_app(app)
 CORS(app)
 CORS(app, resources={r"*": {"origins": "*"}})
 csrf = CSRFProtect(app)
-csrf.init_app(app)
 babel = Babel(app)
 
-app.config['FLASK_ADMIN_SWATCH'] = 'slate'
+app.config['FLASK_ADMIN_SWATCH'] = 'cosmo'
 admin = Admin(app, name='jac-admin', template_mode='bootstrap3')
 admin.add_view(CarView(Car, db.session))
 admin.add_view(ModelView(Document, db.session))

@@ -4,6 +4,7 @@ from sqlalchemy import Integer, Column
 import json
 import os
 from flask_admin.contrib.sqla import ModelView
+from flask_admin.form import SecureForm
 
 database_path = os.environ['DATABASE_URL']
 
@@ -68,6 +69,7 @@ class CarView(ModelView):
     column_searchable_list = ['name']
     create_modal = True
     edit_modal = True
+    form_base_class = SecureForm
     form_choices = {
     'category': [
         ('Autos', 'Autos'),
