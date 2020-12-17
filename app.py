@@ -10,7 +10,6 @@ from flask_nav import Nav
 from flask_nav.elements import Navbar, View, Subgroup, Link
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin
-from flask_admin.contrib.fileadmin.s3 import S3FileAdmin
 from flask_babelex import Babel
 from flask_admin.contrib.fileadmin import FileAdmin
 import os.path as op
@@ -28,11 +27,10 @@ csrf = CSRFProtect(app)
 csrf.init_app(app)
 babel = Babel(app)
 
-app.config['FLASK_ADMIN_SWATCH'] = 'yeti'
+app.config['FLASK_ADMIN_SWATCH'] = 'slate'
 admin = Admin(app, name='jac-admin', template_mode='bootstrap3')
 admin.add_view(CarView(Car, db.session))
 admin.add_view(ModelView(Document, db.session))
-#admin.add_view(S3FileAdmin('jac.mx', 'us-east-1', 'AKIAIUASAYLUYR7MQ4OA', '0V0qnIo5KRsjxRy1a9glVN+xHteyAFzed2p+YE0I'))
 path = op.join(op.dirname(__file__), 'files')
 admin.add_view(FileAdmin(path, '/files/', name='Archivos'))
 
@@ -298,13 +296,7 @@ def not_found_error(error):
         'status_code': 404,
         'success': False
     }), 404
-@app.errorhandler(400)
-def request_error(error):
-    return jsonify({
-        'message': 'Request error',
-        'status_code': 400,
-        'success': False
-    }), 400
+
 @app.errorhandler(AuthError)
 def permissions_error(AuthError):
     return jsonify({
