@@ -1,6 +1,6 @@
 import os
 from flask import Flask, jsonify, abort, request, render_template, flash, url_for, redirect, send_file, send_from_directory
-from models import setup_db, Car, Document, CarView
+from models import setup_db, Car, Document, CarView, CSRFModelView
 from flask_cors import CORS
 from auth import AuthError, requires_auth
 from flask_bootstrap import Bootstrap
@@ -29,7 +29,7 @@ babel = Babel(app)
 app.config['FLASK_ADMIN_SWATCH'] = 'cosmo'
 admin = Admin(app, name='jac-admin', template_mode='bootstrap3')
 admin.add_view(CarView(Car, db.session))
-admin.add_view(ModelView(Document, db.session))
+admin.add_view(CSRFModelView(Document, db.session))
 path = op.join(op.dirname(__file__), 'files')
 admin.add_view(FileAdmin(path, '/files/', name='Archivos'))
 

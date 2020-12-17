@@ -5,6 +5,7 @@ import json
 import os
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.form import SecureForm
+import flask_wtf
 
 database_path = os.environ['DATABASE_URL']
 
@@ -63,6 +64,7 @@ class Car(db.Model):
     }
 
 class CarView(ModelView):
+    form_base_class = flask_wtf.Form
     column_hide_backrefs = True
     can_export = True
     column_exclude_list = ['documents']
@@ -78,6 +80,9 @@ class CarView(ModelView):
         ('LCVs', 'LCVs')
     ]
 }
+
+class CSRFModelView(ModelView):
+    form_base_class = flask_wtf.Form
     
 
 class Document(db.Model):
