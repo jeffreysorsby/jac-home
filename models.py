@@ -80,9 +80,6 @@ class CarView(ModelView):
         ('LCVs', 'LCVs')
     ]
 }
-
-class CSRFModelView(ModelView):
-    form_base_class = flask_wtf.Form
     
 
 class Document(db.Model):
