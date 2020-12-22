@@ -29,7 +29,7 @@ babel = Babel(app)
 app.config['FLASK_ADMIN_SWATCH'] = 'cosmo'
 admin = Admin(app, name='jac-admin', template_mode='bootstrap3')
 admin.add_view(CarView(Car, db.session))
-admin.add_view(View(Document, db.session))
+admin.add_view(ModelView(Document, db.session))
 path = op.join(op.dirname(__file__), 'files')
 admin.add_view(FileAdmin(path, '/files/', name='Archivos'))
 
