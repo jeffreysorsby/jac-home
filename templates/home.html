@@ -16,9 +16,9 @@
     {% endwith %}
     <div class="row">
         {% for f in cars %}
-        <div class="col-sm-3">
+        <div class="col-sm-3 .col-md-4 .col-lg-6">
             <div class="card card-block">
-              <img class="card-img-top" data-src="{{f.image_url}}" alt="100%x180" src="{{f.image_url}}" data-holder-rendered="true" style="height: 220px; width: 100%; display: block; align-self: center;">
+              <img class="card-img-top" data-src="{{f.image_url}}" alt="100%x180" src="{{f.image_url}}" data-holder-rendered="true" style="width: auto; height: auto; max-height: 220px; max-width: 100%; display: block; align-self: center;">
               <div class="card-block">
                <h4 class="card-title" style="text-align: center;"><a href="/model/{{f.endpoint}}">{{f.name}}</a></h4>
               </div>
