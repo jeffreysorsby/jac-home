@@ -288,6 +288,21 @@ def get_car_documents(car_id):
         'success': True,
         'documents': data
     })
+
+@app.route('/cars/search', methods=['POST'])
+def search_cars():
+    car_search = request.form.get('search_term')
+    cars = Car.query.filter(Car.name.ilike('%' + car_search + '%')).all()
+    data = [car.format() for car in cars]
+    return render_template('car_search.html', cars=data)
+
+@app.route('/documents/search', methods=['POST'])
+def search_documents():
+    doc_search = request.form.get('search_term')
+    docs = Document.query.filter(Document.name.ilike('%' + doc_search + '%')).all()
+    data = [doc.format() for doc in docs]
+    return render_template('document_search.html', docs=data)
+
 @app.errorhandler(404)
 def not_found_error(error):
     return jsonify({
