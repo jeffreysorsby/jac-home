@@ -2,7 +2,6 @@ import os
 from flask import Flask, jsonify, abort, request, render_template, flash, url_for, redirect, send_file, send_from_directory
 from models import setup_db, Car, Document, CarView
 from flask_cors import CORS
-from auth import AuthError, requires_auth
 from flask_bootstrap import Bootstrap
 from forms import CarForm, DocumentForm
 from flask_wtf import CSRFProtect
@@ -14,10 +13,10 @@ from flask_babelex import Babel
 from flask_admin.contrib.fileadmin import FileAdmin
 import os.path as op
 
-
 app = Flask(__name__)
 app.config.from_object('config')
 db = setup_db(app)
+
 Bootstrap(app)
 nav = Nav(app)
 nav.init_app(app)
@@ -58,6 +57,7 @@ def navbar_home():
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 
 #HOME
 @app.route('/')
@@ -303,7 +303,7 @@ def search_documents():
     data = [doc.format() for doc in docs]
     return render_template('document_search.html', docs=data)
 
-@app.errorhandler(404)
+@app.errorhandler(404)  
 def not_found_error(error):
     return jsonify({
         'message': 'Not found',
@@ -311,8 +311,8 @@ def not_found_error(error):
         'success': False
     }), 404
 
-@app.errorhandler(AuthError)
-def permissions_error(AuthError):
+@app.errorhandler(401)
+def permissions_error(error):
     return jsonify({
         'message': 'Permissions error',
         'status_code': 401,
@@ -321,4 +321,4 @@ def permissions_error(AuthError):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

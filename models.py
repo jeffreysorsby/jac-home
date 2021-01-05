@@ -1,11 +1,14 @@
 from sqlalchemy import Column, String, create_engine
 from flask_sqlalchemy import SQLAlchemy, Model
-from sqlalchemy import Integer, Column
+from sqlalchemy.event import listens_for
+from sqlalchemy import Integer, Column, String, Boolean
 import json
 import os
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.form import SecureForm
 import flask_wtf
+from flask_security import RoleMixin,  UserMixin
+
 
 database_path = os.environ['DATABASE_URL']
 
@@ -26,7 +29,6 @@ def setup_db(app, database_path=database_path):
 
 class Car(db.Model):  
   __tablename__ = 'car'
-
   id = db.Column(db.Integer, primary_key=True)
   name = db.Column(db.String(100), nullable = False)
   image_url = db.Column(db.String(250), nullable = False)
@@ -84,7 +86,6 @@ class CarView(ModelView):
 
 class Document(db.Model):
     __tablename__= 'document'
-
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(100), nullable = False)
     url = db.Column(db.String(250), nullable = False)
@@ -123,3 +124,11 @@ class Document(db.Model):
       'doc_type': self.doc_type,
       'car_id': self.car_id
       }
+
+class DocumentView(ModelView):
+    form_base_class = flask_wtf.Form
+    column_hide_backrefs = True
+    can_export = True
+    column_searchable_list = ['name']
+    create_modal = True
+    edit_modal = True
