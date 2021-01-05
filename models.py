@@ -7,8 +7,6 @@ import os
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.form import SecureForm
 import flask_wtf
-from flask_security import RoleMixin,  UserMixin
-
 
 database_path = os.environ['DATABASE_URL']
 
