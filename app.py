@@ -88,7 +88,7 @@ def get_models(endpoint):
 @app.route('/cars', methods=['GET'])
 def get_cars():
     try:
-        cars = Car.query.all()
+        cars = Car.query.order_by(Car.name).all()
         data = [car.format() for car in cars]
     except:
         abort(400)
@@ -179,7 +179,7 @@ def edit_car(car_id):
 @app.route('/documents', methods=['GET'])
 def get_documents():
     try:
-        docs = Document.query.all()
+        docs = Document.query.order_by(Document.name).all()
         data = [doc.format() for doc in docs]
     except:
         abort(400)
