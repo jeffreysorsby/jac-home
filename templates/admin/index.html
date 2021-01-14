@@ -1,0 +1,28 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<h1>Proceso para carga de archivos</h1>
+<p>1. Ingresar al apartado <strong><span style="color: #ff9900;">S3 File Admin</span></strong> y seleccionar la carpeta <strong><span style="color: #ff0000;">iconos</span></strong></p>
+<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://s3.amazonaws.com/gml.mx/comunicados/1.png" alt="" width="360" height="208" /></p>
+<p>2. Seleccionar <span style="color: #ff0000;"><strong>Subir archivo</strong></span></p>
+<p style="text-align: center;"><img src="https://s3.amazonaws.com/gml.mx/comunicados/2.png" alt="" width="360" height="173" /></p>
+<p>3. <strong><span style="color: #ff0000;">Seleccionar archivo</span></strong> y <span style="color: #ff0000;"><strong>Salvar</strong></span></p>
+<p style="text-align: center;"><img src="https://s3.amazonaws.com/gml.mx/comunicados/3.png" alt="" width="360" height="177" /></p>
+<p>4. Una vez creado, ir al apartado de <span style="color: #ff9900;"><strong>Document</strong></span> y seleccionar <strong><span style="color: #ff0000;">Crear</span></strong></p>
+<p style="text-align: center;"><img src="https://s3.amazonaws.com/gml.mx/comunicados/4.png" alt="" width="360" height="145" /></p>
+<p>5. Llenar los campos correspondientes:</p>
+<ul>
+<ul>
+<li>Nombre (el nombre que se mostrara en la p&aacute;gina)</li>
+<li><strong><span style="color: #3366ff;">Url</span></strong> (siendo la direcci&oacute;n que se desea abrir), siempre formada por: &ldquo;https://jachome.mx.s3.amazonaws.com/iconos/&rdquo; + "Nombre del Archivo.jpg"</li>
+<li><strong><span style="color: #339966;">Image Url</span></strong> (siendo la imagen que aparecer&aacute; en la p&aacute;gina), siempre formada por &ldquo;https://jachome.mx.s3.amazonaws.com/iconos/&rdquo; + "Nombre del Archivo.jpg"</li>
+<li>Doc Type (Formato con el que se guardo)</li>
+<li>Car (el modelo al cual ser&aacute; asignado)</li>
+<li><strong><span style="color: #ff0000;">Salvar</span></strong></li>
+</ul>
+</ul>
+<p style="text-align: center;"><img src="https://s3.amazonaws.com/gml.mx/comunicados/5.png" alt="" width="360" height="141" /></p>
+<p>6. Verificar</p>
+<p style="text-align: center;"><img src="https://s3.amazonaws.com/gml.mx/comunicados/6.png" alt="" width="200" height="90" /></p>
+<p>&nbsp;</p>
+{% endblock %}
