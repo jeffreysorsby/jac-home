@@ -13,9 +13,9 @@ from flask_babelex import Babel
 from flask_admin.contrib.fileadmin import FileAdmin
 from flask_admin.contrib.fileadmin.s3 import S3FileAdmin
 import os.path as op
-#import ssl
+import ssl
 
-#ssl._create_default_https_context = ssl._create_unverified_context
+ssl._create_default_https_context = ssl._create_unverified_context
 
 app = Flask(__name__)
 app.config.from_object('config')
