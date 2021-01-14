@@ -6,3 +6,5 @@ export API_AUDIENCE='jac-home'
 export FLASK_ENV=development
 export WTF_CSRF_ENABLED=true
 export SECRET_KEY='jacmexico'
+export S3_KEY_ID='AKIAIUASAYLUYR7MQ4OA'
+export S3_SECRET='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'

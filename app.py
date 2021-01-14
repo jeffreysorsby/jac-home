@@ -11,6 +11,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin
 from flask_babelex import Babel
 from flask_admin.contrib.fileadmin import FileAdmin
+from flask_admin.contrib.fileadmin.s3 import S3FileAdmin
 import os.path as op
 
 app = Flask(__name__)

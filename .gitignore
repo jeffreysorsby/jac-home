@@ -4,4 +4,4 @@ __pycache__/
 *$py.class
 .DS_Store
 .Rhistory
-files/**
+/files/**
