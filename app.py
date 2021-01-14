@@ -13,6 +13,9 @@ from flask_babelex import Babel
 from flask_admin.contrib.fileadmin import FileAdmin
 from flask_admin.contrib.fileadmin.s3 import S3FileAdmin
 import os.path as op
+#import ssl
+
+#ssl._create_default_https_context = ssl._create_unverified_context
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -30,8 +33,7 @@ app.config['FLASK_ADMIN_SWATCH'] = 'cosmo'
 admin = Admin(app, name='jac-admin', template_mode='bootstrap3')
 admin.add_view(CarView(Car, db.session))
 admin.add_view(ModelView(Document, db.session))
-path = op.join(op.dirname(__file__), 'files')
-admin.add_view(FileAdmin(path, '/files/', name='Archivos'))
+admin.add_view(S3FileAdmin('jachome.mx', 'us-east-1', os.environ['S3_KEY_ID'], os.environ['S3_SECRET']))
 
 @app.after_request
 def after_request(response):
