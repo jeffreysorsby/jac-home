@@ -8,6 +8,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin.form import SecureForm
 import flask_wtf
 
+
 database_path = os.environ['DATABASE_URL']
 
 db = SQLAlchemy()
@@ -62,6 +63,7 @@ class Car(db.Model):
     'endpoint': self.endpoint,
     'category': self.category
     }
+
 
 class CarView(ModelView):
     form_base_class = flask_wtf.Form

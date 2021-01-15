@@ -8,3 +8,5 @@ export WTF_CSRF_ENABLED=true
 export SECRET_KEY='jacmexico'
 export S3_KEY_ID='AKIAIUASAYLUYR7MQ4OA'
 export S3_SECRET='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'
+export BASIC_AUTH_USERNAME='jachome'
+export BASIC_AUTH_PASSWORD='jacmexico'

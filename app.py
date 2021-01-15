@@ -7,19 +7,29 @@ from forms import CarForm, DocumentForm
 from flask_wtf import CSRFProtect
 from flask_nav import Nav
 from flask_nav.elements import Navbar, View, Subgroup, Link
+
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin
 from flask_babelex import Babel
 from flask_admin.contrib.fileadmin import FileAdmin
 from flask_admin.contrib.fileadmin.s3 import S3FileAdmin
+from flask_admin.contrib import sqla
 import os.path as op
-import ssl
+from flask_basicauth import BasicAuth
 
+from auth import AuthException
+
+
+import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
 app = Flask(__name__)
 app.config.from_object('config')
 db = setup_db(app)
+
+basic_auth = BasicAuth(app)
+app.config['BASIC_AUTH_USERNAME'] = os.environ['BASIC_AUTH_USERNAME']
+app.config['BASIC_AUTH_PASSWORD'] = os.environ['BASIC_AUTH_PASSWORD']
 
 Bootstrap(app)
 nav = Nav(app)
@@ -28,6 +38,16 @@ CORS(app)
 CORS(app, resources={r"*": {"origins": "*"}})
 #csrf = CSRFProtect(app)
 babel = Babel(app)
+
+class ModelView(sqla.ModelView):
+    def is_accessible(self):
+        if not basic_auth.authenticate():
+            raise AuthException('Not authenticated. Refresh the page.')
+        else:
+            return True
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(basic_auth.challenge())
 
 app.config['FLASK_ADMIN_SWATCH'] = 'cosmo'
 admin = Admin(app, name='jac-admin', template_mode='bootstrap3')
@@ -68,6 +88,10 @@ def home():
     resp = get_cars().get_json()
     data = resp.get('data')
     return render_template('home.html', cars=data)
+
+@app.route('/logout')
+def logout():
+    raise AuthException('Successfully logged out.')
 
 @app.route('/files/<path:filename>')
 def download(filename):
