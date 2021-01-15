@@ -49,8 +49,8 @@ class ModelView(sqla.ModelView):
     def inaccessible_callback(self, name, **kwargs):
         return redirect(basic_auth.challenge())
 
-app.config['FLASK_ADMIN_SWATCH'] = 'cosmo'
-admin = Admin(app, name='jac-admin', template_mode='bootstrap3')
+app.config['FLASK_ADMIN_SWATCH'] = 'lumen'
+admin = Admin(app, name='JAC Home Admin', template_mode='bootstrap3')
 admin.add_view(CarView(Car, db.session))
 admin.add_view(ModelView(Document, db.session))
 admin.add_view(S3FileAdmin('jachome.mx', 'us-east-1', os.environ['S3_KEY_ID'], os.environ['S3_SECRET']))
