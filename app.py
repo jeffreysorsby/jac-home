@@ -1,19 +1,18 @@
 import os
 from flask import Flask, jsonify, abort, request, render_template, flash, url_for, redirect, send_file, send_from_directory
-from models import setup_db, Car, Document, CarView
+from models import setup_db, Car, Document, Boletin
+from admin_views import DocumentView, CarView
 from flask_cors import CORS
 from flask_bootstrap import Bootstrap
 from forms import CarForm, DocumentForm
 from flask_wtf import CSRFProtect
 from flask_nav import Nav
 from flask_nav.elements import Navbar, View, Subgroup, Link
-
-from flask_admin.contrib.sqla import ModelView
+from flask_admin.contrib import sqla
 from flask_admin import Admin
 from flask_babelex import Babel
 from flask_admin.contrib.fileadmin import FileAdmin
 from flask_admin.contrib.fileadmin.s3 import S3FileAdmin
-from flask_admin.contrib import sqla
 import os.path as op
 from flask_basicauth import BasicAuth
 
@@ -52,7 +51,8 @@ class ModelView(sqla.ModelView):
 app.config['FLASK_ADMIN_SWATCH'] = 'lumen'
 admin = Admin(app, name='JAC Home Admin', template_mode='bootstrap3')
 admin.add_view(CarView(Car, db.session))
-admin.add_view(ModelView(Document, db.session))
+admin.add_view(DocumentView(Document, db.session))
+admin.add_view(ModelView(Boletin, db.session))
 admin.add_view(S3FileAdmin('jachome.mx', 'us-east-1', os.environ['S3_KEY_ID'], os.environ['S3_SECRET']))
 
 @app.after_request

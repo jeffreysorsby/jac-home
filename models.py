@@ -1,11 +1,9 @@
-from sqlalchemy import Column, String, create_engine
+from sqlalchemy import Column, String, create_engine, DateTime
 from flask_sqlalchemy import SQLAlchemy, Model
 from sqlalchemy.event import listens_for
 from sqlalchemy import Integer, Column, String, Boolean
 import json
 import os
-from flask_admin.contrib.sqla import ModelView
-from flask_admin.form import SecureForm
 import flask_wtf
 
 
@@ -34,6 +32,7 @@ class Car(db.Model):
   endpoint = db.Column(db.String(250), nullable = False)
   category = db.Column(db.String(250), nullable = False)
   documents = db.relationship('Document', backref = 'car', passive_deletes = True, lazy = True)
+  boletines = db.relationship('Boletin', backref='car', passive_deletes = True, lazy = True)
   
   def __repr__(self):
     return f'{self.name}'
@@ -63,26 +62,6 @@ class Car(db.Model):
     'endpoint': self.endpoint,
     'category': self.category
     }
-
-
-class CarView(ModelView):
-    form_base_class = flask_wtf.Form
-    column_hide_backrefs = True
-    can_export = True
-    column_exclude_list = ['documents']
-    column_searchable_list = ['name']
-    create_modal = True
-    edit_modal = True
-    form_choices = {
-    'category': [
-        ('Autos', 'Autos'),
-        ('EVs', 'EVs'),
-        ('SUVs', 'SUVs'),
-        ('Pickups', 'Pickups'),
-        ('LCVs', 'LCVs')
-    ]
-}
-    
 
 class Document(db.Model):
     __tablename__= 'document'
@@ -125,10 +104,45 @@ class Document(db.Model):
       'car_id': self.car_id
       }
 
-class DocumentView(ModelView):
-    form_base_class = flask_wtf.Form
-    column_hide_backrefs = True
-    can_export = True
-    column_searchable_list = ['name']
-    create_modal = True
-    edit_modal = True
+class Boletin(db.Model):
+    __tablename__= 'boletin'
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(100), nullable = False)
+    url = db.Column(db.String(250), nullable = False)
+    image_url = db.Column(db.String(250), nullable = False)
+    fecha = db.Column(db.DateTime, nullable = False)
+    car_id = db.Column(db.Integer, db.ForeignKey('car.id', ondelete = 'CASCADE'), nullable = False)
+
+    def __repr__(self):
+      return f'{self.name}'
+
+
+    def __init__(self, name, url, image_url, fecha, car_id):
+      self.name = name
+      self.url = url
+      self.image_url = image_url
+      self.fecha = fecha
+      self.car_id = car_id
+
+    def insert(self):
+      db.session.add(self)
+      db.session.commit()
+  
+    def update(self):
+      db.session.commit()
+
+    def delete(self):
+      db.session.delete(self)
+      db.session.commit()
+
+    def format(self):
+      return {
+      'id': self.id,
+      'name': self.name,
+      'url': self.url,
+      'image_url': self.image_url,
+      'fecha': self.fecha,
+      'car_id': self.car_id
+      }
+
+
