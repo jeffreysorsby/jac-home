@@ -18,9 +18,9 @@ from flask_basicauth import BasicAuth
 
 from auth import AuthException
 
-
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
+
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -251,8 +251,8 @@ def post_documents():
         request_url = request.form.get('url')
         request_image_url = request.form.get('image_url')
         request_car_id = request.form.get('car_id')
-        request_doc_type = request.form.get('doc_type')
-        document = Document(name=request_name, url=request_url, image_url=request_image_url, car_id=request_car_id, doc_type=request_doc_type)
+        request_subtitulo = request.form.get('subtitulo')
+        document = Document(name=request_name, url=request_url, image_url=request_image_url, car_id=request_car_id, subtitulo=request_subtitulo)
         document.insert()
     except:
         abort(400)
@@ -347,5 +347,5 @@ def permissions_error(error):
     }), 401
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=443)
+if __name__ == '__main__':  
+     app.run(host='127.0.0.1')

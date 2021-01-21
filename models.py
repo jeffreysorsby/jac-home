@@ -69,18 +69,18 @@ class Document(db.Model):
     name = db.Column(db.String(100), nullable = False)
     url = db.Column(db.String(250), nullable = False)
     image_url = db.Column(db.String(250), nullable = False)
-    doc_type = db.Column(db.String(250), nullable = False)
+    subtitulo = db.Column(db.String(250), nullable = False)
     car_id = db.Column(db.Integer, db.ForeignKey('car.id', ondelete = 'CASCADE'), nullable = False)
 
     def __repr__(self):
       return f'{self.name}'
 
 
-    def __init__(self, name, url, image_url, doc_type, car_id):
+    def __init__(self, name, url, image_url, subtitulo, car_id):
       self.name = name
       self.url = url
       self.image_url = image_url
-      self.doc_type = doc_type
+      self.subtitulo = subtitulo
       self.car_id = car_id
 
     def insert(self):
@@ -100,7 +100,7 @@ class Document(db.Model):
       'name': self.name,
       'url': self.url,
       'image_url': self.image_url,
-      'doc_type': self.doc_type,
+      'subtitulo': self.subtitulo,
       'car_id': self.car_id
       }
 
