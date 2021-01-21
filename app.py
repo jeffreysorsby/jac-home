@@ -21,7 +21,6 @@ from auth import AuthException
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
-
 app = Flask(__name__)
 app.config.from_object('config')
 db = setup_db(app)
