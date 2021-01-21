@@ -273,12 +273,12 @@ def edit_documents(document_id):
         request_url = request.form.get('url')
         request_image_url = request.form.get('image_url')
         request_car_id = request.form.get('car_id')
-        request_doc_type = request.form.get('doc_type')
+        request_subtitulo = request.form.get('subtitulo')
         doc.name = request_name
         doc.url = request_url
         doc.image_url = request_image_url
         doc.car_id = request_car_id
-        doc.doc_type = request_doc_type
+        doc.subtitulo = request_subtitulo
         doc.update()
     except:
         abort(400)
