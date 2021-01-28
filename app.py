@@ -109,7 +109,7 @@ def get_models(endpoint):
     except:
         abort(404)
     
-    return render_template('models.html', docs=data, name=name)
+    return render_template('models.html', car=car, docs=data, name=name)
 #GET ALL CARS
 @app.route('/cars', methods=['GET'])
 def get_cars():
